@@ -14,4 +14,17 @@ app.use('/', (req, res) =>{
     res.render('index.html')
 });
 
+let messages = []; //arrays de mensagens 
+
+io.on('connection', socket =>{ //conectando um socket no server com um ID especifico 
+    console.log(`Socket conectad: ${socket.id}`);
+
+    socket.emit('previousMessages', messages); //para novos clientes conectados receberem as msg ja enviadas por outros clientes
+
+    socket.on('sendMessage', data =>{
+        messages.push(data);
+        socket.broadcast.emit('receivedMessage', data);
+    });
+});
+
 server.listen(3000);
